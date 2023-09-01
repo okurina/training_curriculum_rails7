@@ -16,28 +16,27 @@ class CalendarsController < ApplicationController
     params.require(:plan).permit(:date, :plan)
   end
 
-    def get_week
-      wdays = ['(日)','(月)','(火)','(水)','(木)','(金)','(土)']
+  def get_week
+    wdays = ['(日)','(月)','(火)','(水)','(木)','(金)','(土)']
 
-      @todays_date = Date.today
+    @todays_date = Date.today
+    @week_days = []
 
-      @week_days = []
+    plans = Plan.where(date: @todays_date..@todays_date + 6)
 
-      plans = Plan.where(date: @todays_date..@todays_date + 6)
-
-      7.times do |x|
-        today_plans = []
-        plans.each do |plan|
-          today_plans.push(plan.plan) if plan.date == @todays_date + x
-        end
-
-        wday_num = Date.today.wday 
-        if wday_num >= 7
-          wday_num = wday_num -7
-        end
-
-        days = { month: (@todays_date + x).month, date: (@todays_date + x).day, plans: today_plans, wday: wdays[(@todays_date+x).wday] }
-        @week_days.push(days)
+    7.times do |x|
+      today_plans = []
+      plans.each do |plan|
+        today_plans.push(plan.plan) if plan.date == @todays_date + x
       end
+
+      wday_num = Date.today.wday 
+      if wday_num >= 7
+        wday_num = wday_num -7
+      end
+
+      days = { month: (@todays_date + x).month, date: (@todays_date + x).day, plans: today_plans, wday: wdays[(@todays_date+x).wday] }
+      @week_days.push(days)
+    end
   end
 end
